@@ -10,7 +10,7 @@ A slide-out hub for your Omarchy bar. One bell in the bar opens a right-hand pan
 
 - **OS notifications**, archived beyond the stock daemon's 10-entry history and stacked per app. Hover for a dismiss ×; click a notification to focus the app that sent it. Optionally (off by default, in settings) a click runs the command the sender attached, the way clicking the toast does.
 - **Cards** from other plugins: each plugin's full popup, scrollable, inside the hub.
-- **Settings** (the "Hub settings" button at the end of the panel, right-click the bell, or SUPER + SHIFT + N): choose and reorder cards, rebind the shortcuts, hide the wrapped plugins' own bar icons, optionally blur the desktop, delete archived notifications.
+- **Settings** (the "Omahub settings" button at the end of the panel, right-click the bell, or SUPER + SHIFT + N): choose and reorder cards, rebind the shortcuts, hide the wrapped plugins' own bar icons, optionally blur the desktop, delete archived notifications.
 - **A bell badge**: a number for unread notifications (live toasts count the moment they appear), and a small dot when a card has news of its own, so a single event is never counted twice. With both, the dot rides the number's corner.
 - Shortcuts are registered with Hyprland at runtime (`hyprctl eval`); your Hyprland config is not edited. Default: SUPER + N toggles the panel. The shortcut opens the hub on the monitor you are working on; the bell opens it on its own bar's monitor.
 

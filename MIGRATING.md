@@ -180,6 +180,7 @@ Then **really use it**, because QML errors only appear at load time:
 - **Two backends exist when the hub is open** (the bar widget's and the card's). Both watch the same files, so state stays consistent, but a purely local flag such as "scanning…" only changes on the instance you clicked until the next file change. Write to files atomically (write a temp file, then rename) so neither ever reads a half-written file.
 - **Binding loops.** A divider whose `height` is `parent.height` while the parent's height depends on the divider will loop; compute from the columns instead.
 - **Remove guards, don't invert them.** `if (root.bar)` checks exist because the bar can be absent; in a view the backend is always present.
+- **Tooltips need `tooltipHovered`.** The bar only shows `bar.showTooltip(...)` text for a widget that exposes `readonly property bool tooltipHovered: visible && mouseArea.containsMouse`, and the `MouseArea` needs `hoverEnabled: true`. Without that property the call silently does nothing.
 - **Symlinks are rejected by the marketplace** anywhere inside a plugin folder (the validator checks).
 - **Quote shell arguments** with a proper quoting helper, or pass them as an argument vector, when `run()` builds a command from user input.
 

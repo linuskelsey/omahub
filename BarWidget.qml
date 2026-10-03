@@ -360,11 +360,20 @@ BarWidget {
     x: root.unread > 0 ? countBadge.x + countBadge.width - width * 0.6 : bell.x + bell.width - width * 0.5
     y: root.unread > 0 ? countBadge.y - height * 0.4 : bell.y - Style.space(2)
   }
+  // The bar only shows a tooltip for a widget that reports `tooltipHovered` (same contract as
+  // the shell's own buttons).
+  readonly property bool tooltipHovered: visible && bellMouse.containsMouse
+
   MouseArea {
+    id: bellMouse
     anchors.fill: parent
     cursorShape: Qt.PointingHandCursor
     acceptedButtons: Qt.LeftButton | Qt.RightButton
+    hoverEnabled: true
     onClicked: function(m) { if (m.button === Qt.RightButton) root.openSettings(); else root.toggle() }
+    // The bar's own tooltip; says "Close" while the panel is already open.
+    onEntered: if (root.bar) root.bar.showTooltip(root, root.panelOpen ? "Close Omahub" : "Open Omahub")
+    onExited: if (root.bar) root.bar.hideTooltip(root)
   }
 
   // --- slide-out panel ----------------------------------------------------
@@ -581,7 +590,7 @@ BarWidget {
               Text {
                 anchors.verticalCenter: parent.verticalCenter
                 textFormat: Text.PlainText
-                text: "Hub settings"
+                text: "Omahub settings"
                 color: root.textColor
                 font.family: root.fontFamily
                 font.pixelSize: Style.font.body

@@ -28,10 +28,17 @@ BarWidget {
     font.pixelSize: Style.font.body
   }
 
+  // The bar only shows a tooltip for a widget that reports `tooltipHovered`.
+  readonly property bool tooltipHovered: visible && mouse.containsMouse
+
   MouseArea {
+    id: mouse
     anchors.fill: parent
     cursorShape: Qt.PointingHandCursor
+    hoverEnabled: true
     onClicked: root.popupOpen = !root.popupOpen
+    onEntered: if (root.bar) root.bar.showTooltip(root, "Hello Card")
+    onExited: if (root.bar) root.bar.hideTooltip(root)
   }
 
   KeyboardPanel {
