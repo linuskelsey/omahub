@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "your.org.hello-card",
+  "name": "Hello Card",
+  "version": "1.0.0",
+  "author": "You",
+  "license": "MIT",
+  "description": "Example plugin: one bar widget whose popup can also appear as a Plugin Hub card.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Hello Card",
+    "category": "Info",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  },
+  "hubCard": {
+    "entry": "Card.qml",
+    "title": "Hello Card",
+    "contract": 1
+  }
+}
