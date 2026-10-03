@@ -6,7 +6,7 @@
 # layer rule when it is unloaded, so there is nothing else to undo.
 set -euo pipefail
 
-ID="io.github.linuskelsey.plugin-hub"
+ID="io.github.linuskelsey.omarchy-plugin-hub"
 DIR="${XDG_STATE_HOME:-$HOME/.local/state}/$ID"
 
 if [[ ! -d "$DIR" ]]; then

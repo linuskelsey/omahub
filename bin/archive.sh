@@ -6,7 +6,7 @@
 set -euo pipefail
 
 SRC="${HOME}/.local/state/omarchy/notifications"
-DST="${XDG_STATE_HOME:-$HOME/.local/state}/io.github.linuskelsey.plugin-hub"
+DST="${XDG_STATE_HOME:-$HOME/.local/state}/io.github.linuskelsey.omarchy-plugin-hub"
 MAX_ITEMS=200
 MAX_DAYS=30
 # retentionDays in the hub's config.json overrides the default (clamped to 1..365).

@@ -17,7 +17,7 @@ BarWidget {
 
   readonly property string home: Quickshell.env("HOME")
   // Single source of truth for every name derived from the plugin id (must match manifest.json).
-  readonly property string hubId: "io.github.linuskelsey.plugin-hub"
+  readonly property string hubId: "io.github.linuskelsey.omarchy-plugin-hub"
   // Where this file lives (works however the plugin was installed or linked).
   readonly property string pluginDir: String(Qt.resolvedUrl(".")).replace(/^file:\/\//, "").replace(/\/$/, "")
   // Documented, stable location of the hub's config and archive (see README "Card contract").
@@ -199,7 +199,7 @@ BarWidget {
       + "s = {} rawset(_G, '__plugin_hub', s) rawset(_G, '__plugin_hub_owner', '" + ownerToken + "') "
       + "for _, r in ipairs(rawget(_G, '__plugin_hub_rules') or {}) do pcall(function() r:set_enabled(false) end) end "
       + "local rules = {} rawset(_G, '__plugin_hub_rules', rules) local problems = {} "
-      + "do local ok, r = pcall(hl.layer_rule, { match = { namespace = '^linuskelsey-plugin-hub$' }, blur = true, ignore_alpha = 0.05, no_anim = true }) if ok and r then rules[#rules+1] = r else problems[#problems+1] = 'layer rule: ' .. tostring(r) end end "
+      + "do local ok, r = pcall(hl.layer_rule, { match = { namespace = '^linuskelsey-omarchy-plugin-hub$' }, blur = true, ignore_alpha = 0.05, no_anim = true }) if ok and r then rules[#rules+1] = r else problems[#problems+1] = 'layer rule: ' .. tostring(r) end end "
     var pairs = [[cfg.toggleKey, "toggle"], [cfg.settingsKey, "settings"]]
     for (var i = 0; i < pairs.length; i++) {
       if (!keyOk.test(pairs[i][0] || "")) {
@@ -377,7 +377,7 @@ BarWidget {
     // window is laid out in whatever space the user's bar leaves free, whatever its
     // size, position, gaps or spacing scale.
     exclusionMode: ExclusionMode.Normal
-    WlrLayershell.namespace: "linuskelsey-plugin-hub"
+    WlrLayershell.namespace: "linuskelsey-omarchy-plugin-hub"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: root.panelOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     anchors { top: true; bottom: true; left: true; right: true }
@@ -607,7 +607,7 @@ BarWidget {
     visible: root.settingsOpen
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.namespace: "linuskelsey-plugin-hub-settings"
+    WlrLayershell.namespace: "linuskelsey-omarchy-plugin-hub-settings"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: root.settingsOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     anchors { top: true; bottom: true; left: true; right: true }

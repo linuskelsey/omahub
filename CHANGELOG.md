@@ -2,6 +2,11 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the `version` in `manifest.json`.
 
+## [0.2.1] — 2026-10-03
+
+### Changed
+- Renamed the repository to **omarchy-plugin-hub** and the plugin id to `io.github.linuskelsey.omarchy-plugin-hub` (the display name is still "Plugin Hub"). The id determines the state folder (`$XDG_STATE_HOME/<id>/`), the IPC target and the layer namespaces, so a plugin's `HubConfig.qml` must read `…/io.github.linuskelsey.omarchy-plugin-hub/config.json`; the template and [MIGRATING.md](MIGRATING.md) are updated. Nothing had been listed under the old id.
+
 ## [0.2.0] — 2026-10-03
 
 First version intended for publishing. Everything below is relative to the first working prototype.
@@ -22,7 +27,7 @@ First version intended for publishing. Everything below is relative to the first
 - MIT license.
 
 ### Changed
-- Renamed to **Plugin Hub** (`io.github.linuskelsey.plugin-hub`); the manifest key is `hubCard` (was `notificationCard` during development). State lives in `$XDG_STATE_HOME/<id>/`.
+- Renamed to **Plugin Hub** (`io.github.linuskelsey.omarchy-plugin-hub`); the manifest key is `hubCard` (was `notificationCard` during development). State lives in `$XDG_STATE_HOME/<id>/`.
 - Blur and every desktop-affecting option are off by default.
 - The plugin directory is derived from the component's own location instead of a hardcoded path.
 
