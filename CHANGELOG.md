@@ -2,7 +2,7 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the `version` in `manifest.json`.
 
-## [Unreleased]
+## [0.2.3] — 2026-10-03
 
 ### Changed
 - The bell shows a tooltip on hover ("Open Omahub", or "Close Omahub" while the panel is open); the button at the end of the panel reads "Omahub settings". The template and migration guide now cover the `tooltipHovered` property the bar requires before it will show a widget's tooltip.
