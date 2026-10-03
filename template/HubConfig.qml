@@ -12,7 +12,7 @@ Item {
   readonly property bool hiddenByHub: cfg.hideBarWidgets === true && (cfg.cards || []).indexOf(pluginId) >= 0
 
   FileView {
-    path: Quickshell.env("HOME") + "/.local/state/io.github.linuskelsey.omarchy-plugin-hub/config.json"
+    path: Quickshell.env("HOME") + "/.local/state/io.github.linuskelsey.omahub/config.json"
     watchChanges: true
     printErrors: false
     onLoaded: { try { root.cfg = JSON.parse(text()) } catch (e) { root.cfg = ({}) } }

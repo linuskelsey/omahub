@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "io.github.linuskelsey.omarchy-plugin-hub",
-  "name": "Plugin Hub",
-  "version": "0.2.1",
+  "id": "io.github.linuskelsey.omahub",
+  "name": "Omahub",
+  "version": "0.2.2",
   "author": "Linus Kelsey",
   "description": "A slide-out hub in your bar: a longer, stacked OS-notification history plus floating cards that other plugins contribute from their own popups.",
   "kinds": [
@@ -12,12 +12,12 @@
     "barWidget": "BarWidget.qml"
   },
   "barWidget": {
-    "displayName": "Plugin Hub",
+    "displayName": "Omahub",
     "description": "Bell with a badge; opens a slide-out hub of notifications and plugin cards.",
     "category": "Info",
     "allowMultiple": false,
     "defaultSection": "right"
   },
   "license": "MIT",
-  "homepage": "https://github.com/linuskelsey/omarchy-plugin-hub"
+  "homepage": "https://github.com/linuskelsey/omahub"
 }

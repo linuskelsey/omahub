@@ -17,7 +17,7 @@ BarWidget {
 
   readonly property string home: Quickshell.env("HOME")
   // Single source of truth for every name derived from the plugin id (must match manifest.json).
-  readonly property string hubId: "io.github.linuskelsey.omarchy-plugin-hub"
+  readonly property string hubId: "io.github.linuskelsey.omahub"
   // Where this file lives (works however the plugin was installed or linked).
   readonly property string pluginDir: String(Qt.resolvedUrl(".")).replace(/^file:\/\//, "").replace(/\/$/, "")
   // Documented, stable location of the hub's config and archive (see README "Card contract").
@@ -185,21 +185,21 @@ BarWidget {
   // undoes it if it still owns it, so a reload (new instance registers first) is safe.
   readonly property string ownerToken: String(Date.now()) + "-" + Math.floor(Math.random() * 1e9)
   function unregisterHyprland() {
-    var lua = "if rawget(_G, '__plugin_hub_owner') == '" + ownerToken + "' then "
-      + "for _, b in ipairs(rawget(_G, '__plugin_hub') or {}) do pcall(function() b:remove() end) end "
-      + "for _, r in ipairs(rawget(_G, '__plugin_hub_rules') or {}) do pcall(function() r:set_enabled(false) end) end "
-      + "rawset(_G, '__plugin_hub', {}) rawset(_G, '__plugin_hub_rules', {}) rawset(_G, '__plugin_hub_owner', nil) end return 'ok'"
+    var lua = "if rawget(_G, '__omahub_owner') == '" + ownerToken + "' then "
+      + "for _, b in ipairs(rawget(_G, '__omahub') or {}) do pcall(function() b:remove() end) end "
+      + "for _, r in ipairs(rawget(_G, '__omahub_rules') or {}) do pcall(function() r:set_enabled(false) end) end "
+      + "rawset(_G, '__omahub', {}) rawset(_G, '__omahub_rules', {}) rawset(_G, '__omahub_owner', nil) end return 'ok'"
     Quickshell.execDetached(["/usr/bin/hyprctl", "eval", lua])
   }
 
   function registerBinds() {
     var keyOk = /^[A-Za-z0-9_ +]{1,64}$/
-    var lua = "local s = rawget(_G, '__plugin_hub') or {} "
+    var lua = "local s = rawget(_G, '__omahub') or {} "
       + "for _, b in ipairs(s) do pcall(function() b:remove() end) end "
-      + "s = {} rawset(_G, '__plugin_hub', s) rawset(_G, '__plugin_hub_owner', '" + ownerToken + "') "
-      + "for _, r in ipairs(rawget(_G, '__plugin_hub_rules') or {}) do pcall(function() r:set_enabled(false) end) end "
-      + "local rules = {} rawset(_G, '__plugin_hub_rules', rules) local problems = {} "
-      + "do local ok, r = pcall(hl.layer_rule, { match = { namespace = '^linuskelsey-omarchy-plugin-hub$' }, blur = true, ignore_alpha = 0.05, no_anim = true }) if ok and r then rules[#rules+1] = r else problems[#problems+1] = 'layer rule: ' .. tostring(r) end end "
+      + "s = {} rawset(_G, '__omahub', s) rawset(_G, '__omahub_owner', '" + ownerToken + "') "
+      + "for _, r in ipairs(rawget(_G, '__omahub_rules') or {}) do pcall(function() r:set_enabled(false) end) end "
+      + "local rules = {} rawset(_G, '__omahub_rules', rules) local problems = {} "
+      + "do local ok, r = pcall(hl.layer_rule, { match = { namespace = '^linuskelsey-omahub$' }, blur = true, ignore_alpha = 0.05, no_anim = true }) if ok and r then rules[#rules+1] = r else problems[#problems+1] = 'layer rule: ' .. tostring(r) end end "
     var pairs = [[cfg.toggleKey, "toggle"], [cfg.settingsKey, "settings"]]
     for (var i = 0; i < pairs.length; i++) {
       if (!keyOk.test(pairs[i][0] || "")) {
@@ -207,7 +207,7 @@ BarWidget {
         continue
       }
       lua += "do local ok, h = pcall(hl.bind, '" + pairs[i][0] + "', hl.dsp.exec_cmd('omarchy-shell " + root.hubId + " " + pairs[i][1]
-        + "'), { description = 'Plugin Hub' }) if ok and h then s[#s+1] = h else problems[#problems+1] = '" + pairs[i][0] + ": ' .. tostring(h or 'Hyprland did not accept it') end end "
+        + "'), { description = 'Omahub' }) if ok and h then s[#s+1] = h else problems[#problems+1] = '" + pairs[i][0] + ": ' .. tostring(h or 'Hyprland did not accept it') end end "
     }
     lua += "if #problems > 0 then error(table.concat(problems, '; '), 0) end return 'ok'"
     bindProc.command = ["/usr/bin/hyprctl", "eval", lua]
@@ -377,7 +377,7 @@ BarWidget {
     // window is laid out in whatever space the user's bar leaves free, whatever its
     // size, position, gaps or spacing scale.
     exclusionMode: ExclusionMode.Normal
-    WlrLayershell.namespace: "linuskelsey-omarchy-plugin-hub"
+    WlrLayershell.namespace: "linuskelsey-omahub"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: root.panelOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     anchors { top: true; bottom: true; left: true; right: true }
@@ -607,7 +607,7 @@ BarWidget {
     visible: root.settingsOpen
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.namespace: "linuskelsey-omarchy-plugin-hub-settings"
+    WlrLayershell.namespace: "linuskelsey-omahub-settings"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: root.settingsOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     anchors { top: true; bottom: true; left: true; right: true }
@@ -645,7 +645,7 @@ BarWidget {
 
           Text {
             textFormat: Text.PlainText
-            text: "Plugin Hub"
+            text: "Omahub"
             color: Color.menu.text
             font.family: root.fontFamily
             font.pixelSize: Style.font.heading

@@ -2,6 +2,11 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the `version` in `manifest.json`.
 
+## [0.2.2] — 2026-10-03
+
+### Changed
+- Renamed to **Omahub**: the repository is now `omahub`, the plugin id `io.github.linuskelsey.omahub`, and the display name "Omahub". The id determines the state folder (`$XDG_STATE_HOME/<id>/`), the IPC target and the layer namespaces, so a plugin's `HubConfig.qml` must read `…/io.github.linuskelsey.omahub/config.json`; the template and [MIGRATING.md](MIGRATING.md) are updated. Nothing had been listed under the earlier ids. Earlier entries below keep the names in use at the time.
+
 ## [0.2.1] — 2026-10-03
 
 ### Changed

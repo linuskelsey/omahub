@@ -7,7 +7,7 @@ HERE="$(cd "$(dirname "$0")/.." && pwd)"
 ARCHIVE="$HERE/bin/archive.sh"
 CARDS="$HERE/bin/cards.sh"
 VALIDATE="$HERE/bin/validate-card.sh"
-ID="io.github.linuskelsey.omarchy-plugin-hub"
+ID="io.github.linuskelsey.omahub"
 
 pass=0; fail=0
 ok()   { pass=$((pass + 1)); echo "  ok   $1"; }

@@ -1,6 +1,6 @@
-# Plugin Hub
+# Omahub
 
-![The Plugin Hub open over an empty desktop: stacked notifications above an arXiv card and a football card](preview.png)
+![The Omahub open over an empty desktop: stacked notifications above an arXiv card and a football card](preview.png)
 
 A slide-out hub for your Omarchy bar. One bell in the bar opens a right-hand panel with a longer, stacked history of your OS notifications and, beneath them, floating cards that other plugins contribute from their own popups. It is built for notifications today and for any plugin popup you want to keep one click away.
 
@@ -19,19 +19,19 @@ A slide-out hub for your Omarchy bar. One bell in the bar opens a right-hand pan
 One command, no manual setup afterwards:
 
 ```bash
-omarchy plugin add https://github.com/linuskelsey/omarchy-plugin-hub.git --enable --yes
+omarchy plugin add https://github.com/linuskelsey/omahub.git --enable --yes
 ```
 
-The bell appears in the right section of the bar. Requires `jq` and `inotify-tools`; if either is missing the panel says so. Shortcut registration needs Hyprland's Lua config (0.56+); if it is unavailable, settings shows the error and the command to bind yourself (`omarchy-shell io.github.linuskelsey.omarchy-plugin-hub toggle`).
+The bell appears in the right section of the bar. Requires `jq` and `inotify-tools`; if either is missing the panel says so. Shortcut registration needs Hyprland's Lua config (0.56+); if it is unavailable, settings shows the error and the command to bind yourself (`omarchy-shell io.github.linuskelsey.omahub toggle`).
 
 ### Uninstall
 
 ```bash
 bin/uninstall.sh          # delete the hub's config and archived notification text
-omarchy plugin remove io.github.linuskelsey.omarchy-plugin-hub --yes
+omarchy plugin remove io.github.linuskelsey.omahub --yes
 ```
 
-`omarchy plugin remove` never runs plugin code, so it cannot clean up after the plugin; the archive (notification text, private to your user) stays in `~/.local/state/io.github.linuskelsey.omarchy-plugin-hub/` until you run `bin/uninstall.sh` or delete that folder. Removing the plugin does take its Hyprland shortcuts and layer rule back out. Even without uninstalling, archived entries are deleted automatically after 30 days (`"retentionDays"` in the hub's `config.json`, 1–365, overrides this).
+`omarchy plugin remove` never runs plugin code, so it cannot clean up after the plugin; the archive (notification text, private to your user) stays in `~/.local/state/io.github.linuskelsey.omahub/` until you run `bin/uninstall.sh` or delete that folder. Removing the plugin does take its Hyprland shortcuts and layer rule back out. Even without uninstalling, archived entries are deleted automatically after 30 days (`"retentionDays"` in the hub's `config.json`, 1–365, overrides this).
 
 ## Defaults
 
@@ -72,7 +72,7 @@ In `manifest.json`:
 - `title` — shown in the hub's settings (defaults to the plugin name).
 - `contract` — the contract version you built against (defaults to 1). A hub that only understands an older contract ignores your card and says so in settings, instead of loading something it cannot run.
 
-`Card.qml`'s root is an `Item` with a real `implicitHeight`. The hub sets `hubWidth`, may read an optional `badge` (int, added to the bell) and calls an optional `markViewed()` each time the panel opens. The hub's own settings live in `~/.local/state/io.github.linuskelsey.omarchy-plugin-hub/config.json` (`$XDG_STATE_HOME` is honoured); `hideBarWidgets` and `cards` there are what a plugin's optional `HubConfig.qml` reads to hide its own bar icon.
+`Card.qml`'s root is an `Item` with a real `implicitHeight`. The hub sets `hubWidth`, may read an optional `badge` (int, added to the bell) and calls an optional `markViewed()` each time the panel opens. The hub's own settings live in `~/.local/state/io.github.linuskelsey.omahub/config.json` (`$XDG_STATE_HOME` is honoured); `hideBarWidgets` and `cards` there are what a plugin's optional `HubConfig.qml` reads to hide its own bar icon.
 
 Recommended structure, so the bar popup and the hub card never drift apart:
 

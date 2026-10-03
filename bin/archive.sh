@@ -6,7 +6,7 @@
 set -euo pipefail
 
 SRC="${HOME}/.local/state/omarchy/notifications"
-DST="${XDG_STATE_HOME:-$HOME/.local/state}/io.github.linuskelsey.omarchy-plugin-hub"
+DST="${XDG_STATE_HOME:-$HOME/.local/state}/io.github.linuskelsey.omahub"
 MAX_ITEMS=200
 MAX_DAYS=30
 # retentionDays in the hub's config.json overrides the default (clamped to 1..365).
@@ -17,7 +17,7 @@ fi
 STEM_RE='^[0-9]+-[0-9]+$'
 
 for dep in jq inotifywait; do
-  command -v "$dep" >/dev/null 2>&1 || { echo "Plugin Hub needs '$dep' (install jq and inotify-tools)." >&2; exit 3; }
+  command -v "$dep" >/dev/null 2>&1 || { echo "Omahub needs '$dep' (install jq and inotify-tools)." >&2; exit 3; }
 done
 
 umask 077

@@ -1,6 +1,6 @@
-# Migrating a plugin to the Plugin Hub
+# Migrating a plugin to the Omahub
 
-This guide converts an existing bar-widget plugin so that its popup can also appear as a card in the Plugin Hub, **without changing how it behaves when the hub is absent**. It is based on converting two real plugins (an arXiv scanner and a football tracker). If you are starting a new plugin instead, copy [`template/`](template/) and rename `manifest.example.json` to `manifest.json` (it is named that way here because the marketplace treats any `manifest.json` below the repository root as a second plugin).
+This guide converts an existing bar-widget plugin so that its popup can also appear as a card in the Omahub, **without changing how it behaves when the hub is absent**. It is based on converting two real plugins (an arXiv scanner and a football tracker). If you are starting a new plugin instead, copy [`template/`](template/) and rename `manifest.example.json` to `manifest.json` (it is named that way here because the marketplace treats any `manifest.json` below the repository root as a second plugin).
 
 You will end up with:
 

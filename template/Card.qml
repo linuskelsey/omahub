@@ -1,7 +1,7 @@
 import QtQuick
 import qs.Commons
 
-// What the Plugin Hub loads (manifest: hubCard.entry). Contract:
+// What the Omahub loads (manifest: hubCard.entry). Contract:
 //   - root is an Item with a real implicitHeight
 //   - the hub sets hubWidth; the item should fill its parent's width
 //   - optional `badge` (int) is added to the bell; optional markViewed() is called on open

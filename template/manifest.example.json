@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "author": "You",
   "license": "MIT",
-  "description": "Example plugin: one bar widget whose popup can also appear as a Plugin Hub card.",
+  "description": "Example plugin: one bar widget whose popup can also appear as a Omahub card.",
   "kinds": [
     "bar-widget"
   ],

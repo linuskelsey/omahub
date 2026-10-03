@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# validate-card.sh <plugin-dir> — check that a plugin is a well-formed Plugin Hub card provider.
+# validate-card.sh <plugin-dir> — check that a plugin is a well-formed Omahub card provider.
 # Errors exit 1; warnings don't. Does not run or load the plugin.
 set -uo pipefail
 
