@@ -2,6 +2,11 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the `version` in `manifest.json`.
 
+## [0.2.4] — 2026-10-03
+
+### Fixed
+- The hub now closes when another window becomes active while it is open. Clicking a card link or a notification used to bring the browser (or the notifying app) to the front with the hub still sitting on top of it. A short grace period after opening stops the hub taking focus from closing itself, and a window merely disappearing, with nothing else to focus, does not close it. Verified with a link opened in an already-active browser as well as with one that brings a different window forward.
+
 ## [0.2.3] — 2026-10-03
 
 ### Changed

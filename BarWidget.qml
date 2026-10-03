@@ -25,6 +25,7 @@ BarWidget {
   readonly property string archiveScript: pluginDir + "/bin/archive.sh"
 
   property bool panelOpen: false
+  property double openedAt: 0
   property bool settingsOpen: false
   property var archive: ({ seen: 0, items: [] })
   property var available: []          // candidate cards found on disk
@@ -83,6 +84,7 @@ BarWidget {
   // --- actions ------------------------------------------------------------
   function open(useFocused) {
     pinScreen(useFocused === true)
+    openedAt = Date.now()
     scroller.contentY = 0   // always open at the top, not where it was last left
     // The bar paints its own open-panel mark under a widget that is the active popout.
     if (root.bar) root.bar.requestPopout(root)
@@ -212,6 +214,19 @@ BarWidget {
     lua += "if #problems > 0 then error(table.concat(problems, '; '), 0) end return 'ok'"
     bindProc.command = ["/usr/bin/hyprctl", "eval", lua]
     bindProc.running = true
+  }
+
+  // Clicking a card link or a notification action usually brings another window to the front
+  // (the browser, the app that sent the notification). The hub is an overlay, so without this it
+  // would stay on top of that window. Close it as soon as a different window becomes active.
+  // Ignored for a moment after opening (the hub itself taking focus can shuffle the active
+  // window), and when the active window goes away rather than being replaced.
+  Connections {
+    target: Hyprland
+    function onActiveToplevelChanged() {
+      if (!root.panelOpen || Date.now() - root.openedAt < 700) return
+      if (Hyprland.activeToplevel) root.close()
+    }
   }
 
   // --- IPC ----------------------------------------------------------------
