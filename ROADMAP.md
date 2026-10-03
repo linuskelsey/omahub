@@ -2,10 +2,9 @@
 
 Rough order, not promises.
 
-## Soon (before or shortly after the first public release)
+## Soon
 
-- **Preview image** for the marketplace listing.
-- **Public repository and listing**: pick the repo name, tag 0.2.0, submit to the Omarchy marketplace (the README's "What the hub touches" section is written for that review).
+- **Skip shortcuts that are already bound.** Before registering its shortcuts, read Hyprland's bind table and leave any key something else already uses alone, reporting the conflict in settings (Stage Control does this). Two copies of the hub registering the same default shortcuts is a situation that crashed Hyprland 0.56.2 during development: removing one copy's shortcuts while the other's exist took the compositor down in its Lua keybind code. Until this lands, don't run two copies of the hub at the same time.
 - **Test on a Hyprland using the old (non-Lua) config format**, and decide whether shortcuts need a different registration path there.
 - **Single watcher across monitors**: share one archive watcher and one set of card backends instead of one per bar.
 
