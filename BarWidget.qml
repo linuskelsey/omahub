@@ -610,6 +610,37 @@ BarWidget {
   }
 
   // --- settings overlay ---------------------------------------------------
+  // While settings are open, ask the compositor to deliver shortcuts to this overlay instead of
+  // firing global binds. Otherwise Omarchy's SUPER+W ("close window") closes whatever window is
+  // behind the overlay. Keys the overlay does not use are simply ignored.
+  ShortcutInhibitor {
+    window: settingsWin
+    enabled: root.settingsOpen
+  }
+
+  // Does a key event match a shortcut written like "SUPER + SHIFT + N"? Letters and digits only.
+  function shortcutMatches(event, spec) {
+    if (!spec) return false
+    var mods = 0, key = -1
+    var parts = String(spec).split("+")
+    for (var i = 0; i < parts.length; i++) {
+      var t = parts[i].trim().toUpperCase()
+      if (t === "SUPER" || t === "META" || t === "LOGO" || t === "MOD4") mods |= Qt.MetaModifier
+      else if (t === "SHIFT") mods |= Qt.ShiftModifier
+      else if (t === "CTRL" || t === "CONTROL") mods |= Qt.ControlModifier
+      else if (t === "ALT") mods |= Qt.AltModifier
+      else if (/^[A-Z]$/.test(t)) key = Qt.Key_A + (t.charCodeAt(0) - 65)
+      else if (/^[0-9]$/.test(t)) key = Qt.Key_0 + (t.charCodeAt(0) - 48)
+      else return false
+    }
+    var wanted = Qt.MetaModifier | Qt.ShiftModifier | Qt.ControlModifier | Qt.AltModifier
+    return key !== -1 && event.key === key && (event.modifiers & wanted) === mods
+  }
+  // Shortcuts that should simply dismiss the settings overlay.
+  function dismissesSettings(event) {
+    return shortcutMatches(event, "SUPER + W") || shortcutMatches(event, cfg.settingsKey) || shortcutMatches(event, cfg.toggleKey)
+  }
+
   PanelWindow {
     id: settingsWin
     screen: root.anchorScreen
@@ -634,6 +665,10 @@ BarWidget {
       padding: Style.spacing.panelPadding
 
       MouseArea { anchors.fill: parent; onClicked: {} }
+      // Events not consumed by a field inside (e.g. a modifier shortcut) bubble up to here.
+      Keys.onPressed: function(event) {
+        if (root.dismissesSettings(event)) { root.closeSettings(); event.accepted = true }
+      }
       Item {
         focus: true
         Keys.onEscapePressed: root.closeSettings()

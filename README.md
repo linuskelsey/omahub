@@ -96,6 +96,7 @@ Developed and tested on **Omarchy 4.0.4**, **Quickshell 0.3.1** and **Hyprland 0
 - Registers its two shortcuts and a layer rule through `hyprctl eval` (keys are validated against `^[A-Za-z0-9_ +]{1,64}$`); removes them when it is unloaded. With blur enabled it also toggles `decoration:blur:enabled` and restores it on close.
 - Runs `bin/archive.sh watch`, a long-lived `inotifywait` on the notification daemon's directories, and copies those entries (read-only on the daemon's side) into the private archive above. Archive file names are validated, written atomically, and icons are only copied from the daemon's own images folder.
 - Clicking a notification focuses the sending app with `omarchy-hyprland-focus-app`. Only if you turn on "Clicking a notification may run the command its sender attached" does it instead run the `execArgv` the sender stored (as a vector, never through a shell string — the same rule and trust boundary as clicking the toast). That command is data from another program that the archive keeps for up to 30 days, which is why it is opt-in.
+- While the settings overlay is open it holds a Wayland keyboard-shortcuts inhibitor (Quickshell's `ShortcutInhibitor`), so global shortcuts such as close-window go to the overlay instead of the window behind it; SUPER+W and the hub's own shortcuts close the overlay. The inhibitor is released when settings close, and no bind is changed or replaced.
 - Does not edit `shell.json`, any Hyprland config file, or any other plugin.
 
 ## Development

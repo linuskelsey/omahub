@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the `ve
 ### Changed
 - The bell shows a tooltip on hover ("Open Omahub", or "Close Omahub" while the panel is open); the button at the end of the panel reads "Omahub settings". The template and migration guide now cover the `tooltipHovered` property the bar requires before it will show a widget's tooltip.
 
+### Fixed
+- While the settings overlay is open, global shortcuts no longer reach the window behind it: Omarchy's SUPER+W ("close window") used to close whatever was underneath. The overlay now holds a Wayland shortcuts inhibitor for as long as it is open and treats SUPER+W, and the hub's own shortcuts, as "close settings". No bind or config file is changed or replaced, and everything is released the moment settings close.
+
 ## [0.2.2] — 2026-10-03
 
 ### Changed
