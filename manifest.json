@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "io.github.linuskelsey.omahub",
   "name": "Omahub",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "author": "Linus Kelsey",
   "description": "A slide-out hub in your bar: a longer, stacked OS-notification history plus floating cards that other plugins contribute from their own popups.",
   "kinds": [

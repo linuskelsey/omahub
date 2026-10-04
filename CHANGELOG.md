@@ -2,6 +2,11 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the `version` in `manifest.json`.
 
+## [0.2.5] — 2026-10-04
+
+### Added
+- Two optional, additive card properties (card contract stays at version 1; cards that do not declare them are unaffected). `shell`: bound to the bar's shell object (`null` without a bar), so a card can reach shell-owned services such as `shell.serviceFor(moduleName)` instead of starting its own backend. `hubOpen`: a bool bound to the panel's open state, so a card can start and stop polling as the hub opens and closes. Documented in the README "Card contract".
+
 ## [0.2.4] — 2026-10-03
 
 ### Fixed

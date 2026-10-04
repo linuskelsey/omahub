@@ -149,7 +149,7 @@ BarWidget {
 
 ## 5. Write `Card.qml`
 
-Copy [`template/Card.qml`](template/Card.qml). The only parts that are yours are the `badge` expression (a number of "things needing attention", or 0) and what `markViewed()` does (e.g. write a "last seen" file, which should clear the badge).
+Copy [`template/Card.qml`](template/Card.qml). The only parts that are yours are the `badge` expression (a number of "things needing attention", or 0) and what `markViewed()` does (e.g. write a "last seen" file, which should clear the badge). Optionally declare `property var shell: null` (the bar's shell, for plugins that get their state from a shell-owned service via `shell.serviceFor(moduleName)`) and `property bool hubOpen: false` (true while the panel is open, to pause polling when closed).
 
 ## 6. Declare the card in `manifest.json`
 

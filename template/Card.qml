@@ -5,6 +5,8 @@ import qs.Commons
 //   - root is an Item with a real implicitHeight
 //   - the hub sets hubWidth; the item should fill its parent's width
 //   - optional `badge` (int) is added to the bell; optional markViewed() is called on open
+//   - optional `property var shell: null` is bound to the bar's shell (for shell-owned services)
+//   - optional `property bool hubOpen: false` is bound to the panel's open state
 Item {
   id: card
 
