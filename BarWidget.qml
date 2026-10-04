@@ -569,6 +569,7 @@ BarWidget {
                   onLoaded: {
                     if (item && "hubWidth" in item) item.hubWidth = Qt.binding(function() { return loader.width })
                     if (item && "shell" in item) item.shell = Qt.binding(function() { return root.bar ? root.bar.shell : null })
+                    if (item && "hubOpen" in item) item.hubOpen = Qt.binding(function() { return root.panelOpen })
                     if (item && "badge" in item) {
                       var id = cardFrame.modelData.id
                       var update = function() {
