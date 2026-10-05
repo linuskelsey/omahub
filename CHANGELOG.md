@@ -2,6 +2,11 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the `version` in `manifest.json`.
 
+## [Unreleased]
+
+### Fixed
+- The shortcuts (SUPER+N, SUPER+SHIFT+N) stopped working after Hyprland reloaded its config, until the bell was clicked. A reload drops binds registered at runtime, and anything can cause one: another plugin that wires its own bindings and reloads Hyprland at every shell start, a monitor-profile daemon, or an edit to the Hyprland config. The hub now listens for Hyprland's `configreloaded` event and registers its shortcuts again once the reload has settled.
+
 ## [0.3.0] — 2026-10-05
 
 ### Changed

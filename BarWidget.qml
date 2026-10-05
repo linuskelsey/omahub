@@ -189,7 +189,7 @@ BarWidget {
 
   // Binds are registered with Hyprland at runtime (never editing the user's
   // config), the same way Stage Control does it; a config reload drops them
-  // and the next shell start / settings save registers them again.
+  // and the hub registers them again when Hyprland reports the reload (rawEvent "configreloaded").
   // Each instance claims the Hyprland-side registration with a token; teardown only
   // undoes it if it still owns it, so a reload (new instance registers first) is safe.
   readonly property string ownerToken: String(Date.now()) + "-" + Math.floor(Math.random() * 1e9)
@@ -235,6 +235,17 @@ BarWidget {
       if (Hyprland.activeToplevel) root.close()
     }
   }
+
+  // A Hyprland config reload wipes runtime-registered binds. Anything can trigger one (another
+  // plugin wiring its own bindings at shell start, a monitor-profile daemon, the user's own edits),
+  // so re-register once the reload has settled instead of waiting for the next click or restart.
+  Connections {
+    target: Hyprland
+    function onRawEvent(event) {
+      if (event && String(event.name) === "configreloaded") rebindTimer.restart()
+    }
+  }
+  Timer { id: rebindTimer; interval: 400; onTriggered: root.registerBinds() }
 
   // --- IPC ----------------------------------------------------------------
   IpcHandler {
