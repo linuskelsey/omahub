@@ -29,7 +29,7 @@ BarWidget {
   property bool settingsOpen: false
   property var archive: ({ seen: 0, items: [] })
   property var available: []          // candidate cards found on disk
-  property var cfg: ({ cards: [], toggleKey: "SUPER + N", settingsKey: "SUPER + SHIFT + N", hideBarWidgets: false, blurDesktop: false, clickRunsActions: false, knownCards: [] })
+  property var cfg: ({ cards: [], toggleKey: "SUPER + N", settingsKey: "SUPER + SHIFT + N", hideBarWidgets: false, blurDesktop: false, clickRunsActions: false, knownCards: [], expandedCards: [] })
   property string bindStatus: ""
 
   // Highest hubCard contract this hub understands (see README "Card contract").
@@ -168,6 +168,13 @@ BarWidget {
     var ids = (cfg.cards || []).filter(function(x) { return x !== id })
     if (on) ids.push(id)
     saveConfig(Object.assign({}, cfg, { cards: ids }))
+  }
+  // Expanded/collapsed is a view preference: written to config, but unlike saveConfig it does not re-register the binds.
+  function setCardExpanded(id, on) {
+    var ids = (cfg.expandedCards || []).filter(function(x) { return x !== id })
+    if (on) ids.push(id)
+    cfg = Object.assign({}, cfg, { expandedCards: ids })
+    cfgFile.setText(JSON.stringify(cfg, null, 2) + "\n")
   }
   function moveCard(id, delta) {
     var ids = (cfg.cards || []).slice(), i = ids.indexOf(id), j = i + delta
@@ -534,8 +541,10 @@ BarWidget {
             delegate: BorderSurface {
               id: cardFrame
               required property var modelData
+              readonly property bool expanded: (root.cfg.expandedCards || []).indexOf(modelData.id) >= 0
+              readonly property int headerHeight: Style.space(36)
               width: col.width
-              height: Math.min(loader.height, root.maxCardHeight) + Style.space(24)
+              height: headerHeight + (expanded ? Math.min(loader.height, root.maxCardHeight) + Style.space(24) : 0)
               radius: Style.cornerRadius
               color: root.surface
               borderSpec: Border.flat(Qt.alpha(Color.accent, 0.5), Math.max(1, Style.space(1)))
@@ -550,11 +559,58 @@ BarWidget {
                 }
               }
 
+              // Header: title, chevron; click anywhere on it to expand or collapse. The card stays
+              // loaded while collapsed so its badge and markViewed() keep working.
+              Item {
+                id: cardHeader
+                width: parent.width
+                height: cardFrame.headerHeight
+                Text {
+                  anchors.left: parent.left
+                  anchors.leftMargin: Style.space(12)
+                  anchors.right: chevron.left
+                  anchors.rightMargin: Style.space(8)
+                  anchors.verticalCenter: parent.verticalCenter
+                  textFormat: Text.PlainText
+                  elide: Text.ElideRight
+                  text: cardFrame.modelData.title
+                  color: root.textColor
+                  font.family: root.fontFamily
+                  font.pixelSize: Style.font.body
+                  font.bold: true
+                }
+                Text {
+                  id: chevron
+                  anchors.right: parent.right
+                  anchors.rightMargin: Style.space(12)
+                  anchors.verticalCenter: parent.verticalCenter
+                  textFormat: Text.PlainText
+                  text: "\uf078"
+                  color: root.textColor
+                  opacity: headerHover.containsMouse ? 1 : 0.6
+                  font.family: root.fontFamily
+                  font.pixelSize: Style.font.caption
+                  rotation: cardFrame.expanded ? 180 : 0
+                  Behavior on rotation { NumberAnimation { duration: 120 } }
+                }
+                MouseArea {
+                  id: headerHover
+                  anchors.fill: parent
+                  hoverEnabled: true
+                  cursorShape: Qt.PointingHandCursor
+                  onClicked: root.setCardExpanded(cardFrame.modelData.id, !cardFrame.expanded)
+                }
+              }
+
               // Cards taller than the cap scroll inside their frame.
               Flickable {
                 id: cardScroll
+                visible: cardFrame.expanded
                 anchors.fill: parent
-                anchors.margins: Style.space(12)
+                anchors.topMargin: cardFrame.headerHeight
+                anchors.leftMargin: Style.space(12)
+                anchors.rightMargin: Style.space(12)
+                anchors.bottomMargin: Style.space(12)
                 contentWidth: width
                 contentHeight: loader.height
                 clip: true
@@ -569,7 +625,7 @@ BarWidget {
                   onLoaded: {
                     if (item && "hubWidth" in item) item.hubWidth = Qt.binding(function() { return loader.width })
                     if (item && "shell" in item) item.shell = Qt.binding(function() { return root.bar ? root.bar.shell : null })
-                    if (item && "hubOpen" in item) item.hubOpen = Qt.binding(function() { return root.panelOpen })
+                    if (item && "hubOpen" in item) item.hubOpen = Qt.binding(function() { return root.panelOpen && cardFrame.expanded })
                     if (item && "badge" in item) {
                       var id = cardFrame.modelData.id
                       var update = function() {
