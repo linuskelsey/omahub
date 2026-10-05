@@ -6,7 +6,8 @@ import qs.Commons
 //   - the hub sets hubWidth; the item should fill its parent's width
 //   - optional `badge` (int) is added to the bell; optional markViewed() is called on open
 //   - optional `property var shell: null` is bound to the bar's shell (for shell-owned services)
-//   - optional `property bool hubOpen: false` is bound to the panel's open state
+//   - optional `property bool hubOpen: false` is true only while the panel is open AND this card is expanded
+//   - the hub draws the title and chevron; collapsed by default, so do not draw your own title
 Item {
   id: card
 

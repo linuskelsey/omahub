@@ -149,7 +149,9 @@ BarWidget {
 
 ## 5. Write `Card.qml`
 
-Copy [`template/Card.qml`](template/Card.qml). The only parts that are yours are the `badge` expression (a number of "things needing attention", or 0) and what `markViewed()` does (e.g. write a "last seen" file, which should clear the badge). Optionally declare `property var shell: null` (the bar's shell, for plugins that get their state from a shell-owned service via `shell.serviceFor(moduleName)`) and `property bool hubOpen: false` (true while the panel is open, to pause polling when closed).
+Copy [`template/Card.qml`](template/Card.qml). The only parts that are yours are the `badge` expression (a number of "things needing attention", or 0) and what `markViewed()` does (e.g. write a "last seen" file, which should clear the badge). Optionally declare `property var shell: null` (the bar's shell, for plugins that get their state from a shell-owned service via `shell.serviceFor(moduleName)`) and `property bool hubOpen: false` (true only while the panel is open and your card is expanded, so pause polling when it is false).
+
+The hub draws the card's header (the manifest `title` and a chevron) and shows the card collapsed by default, so do not draw your own title in `Card.qml`. Cards stay loaded while collapsed, so `badge` and `markViewed()` still run, but anything expensive should be gated on `hubOpen`. An expanded card is capped at 400px and scrolls inside its frame; if the plugin's popup has its own hero or title that is shared with the bar popup, a slightly redundant header is acceptable.
 
 ## 6. Declare the card in `manifest.json`
 
