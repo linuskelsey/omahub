@@ -2,7 +2,10 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the `version` in `manifest.json`.
 
-## [Unreleased]
+## [0.3.1] — 2026-10-05
+
+### Security
+- A notification's icon is now only ever loaded locally. The archive used to keep a sender-chosen `http(s)` `appIcon` as it was, and the panel passed it straight to an image loader, so merely viewing the archive made a request to an address the sender chose (exposing the user's IP and when the archive was viewed, and reaching local-network endpoints). `archive.sh` now drops icon and image values with any scheme other than `file:` or `image:` when archiving, and the panel resolves icons like the stock notification card does (`file://`, `image://`, an absolute path or a themed icon name) and ignores anything else, which also covers entries archived before this fix. Reported in the 0.3.0 review.
 
 ### Fixed
 - The shortcuts (SUPER+N, SUPER+SHIFT+N) stopped working after Hyprland reloaded its config, until the bell was clicked. A reload drops binds registered at runtime, and anything can cause one: another plugin that wires its own bindings and reloads Hyprland at every shell start, a monitor-profile daemon, or an edit to the Hyprland config. The hub now listens for Hyprland's `configreloaded` event and registers its shortcuts again once the reload has settled.

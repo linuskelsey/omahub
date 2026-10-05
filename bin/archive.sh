@@ -37,8 +37,11 @@ sync_one() {
   [[ -e "$DST/items/$stem.json" && ! "$f" -nt "$DST/items/$stem.json" ]] && return 0
   grep -qxF "$stem" "$DST/dismissed" && return 0
 
+  # Only local icons are kept: a sender-chosen http(s) (or other remote-scheme) appIcon or image
+  # would make the panel fetch it when the archive is viewed. file:// and image:// stay.
   local filter='.'
   local -a args=()
+  filter+=' | (.appIcon, .image) |= (if type == "string" and test("^[A-Za-z][A-Za-z0-9+.-]*:") and (test("^(file|image):") | not) then "" else . end)'
   for key in appIcon image; do
     local val
     val="$(jq -r --arg k "$key" '.[$k] // ""' "$f")"
