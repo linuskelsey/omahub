@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import qs.Ui
 import qs.Commons
 
@@ -8,6 +9,18 @@ Item {
   id: group
 
   required property var model_
+
+  // Resolve a notification's icon the way the stock card does: file://, image:// (local providers),
+  // an absolute path, or a themed icon name. Anything else (http(s) and other schemes) is dropped, so
+  // a sender cannot make the hub fetch a URL of its choosing when the archive is viewed.
+  function iconSource(icon) {
+    var v = String(icon || "")
+    if (v.length === 0) return ""
+    if (v.indexOf("file://") === 0 || v.indexOf("image://") === 0) return v
+    if (v.charAt(0) === "/") return "file://" + v
+    if (/^[A-Za-z][A-Za-z0-9+.-]*:/.test(v)) return ""
+    return Quickshell.iconPath(v, true)
+  }
   property bool expanded: false
   property color surface: Color.popups.background
   property color textColor: Color.popups.text
@@ -125,7 +138,7 @@ Item {
             Image {
               id: icon
               anchors.fill: parent
-              source: card.n && card.n.appIcon ? card.n.appIcon : ""
+              source: card.n && card.n.appIcon ? group.iconSource(card.n.appIcon) : ""
               fillMode: Image.PreserveAspectFit
               asynchronous: true
               visible: status === Image.Ready

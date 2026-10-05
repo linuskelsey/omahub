@@ -52,6 +52,17 @@ eq "removed entry is not resurrected by sync" 2 "$(count)"
 check "remove rejects a path-like stem" bash -c "! '$ARCHIVE' remove '../etc/passwd'"
 check "remove rejects an empty stem" bash -c "! '$ARCHIVE' remove ''"
 
+notif "$SRC/history" 1700000000010-10 Remote "tracker" "http://203.0.113.9/pixel.png"
+notif "$SRC/history" 1700000000011-11 Remote "tracker2" "https://example.invalid/i.png"
+notif "$SRC/history" 1700000000012-12 Local "themed" "firefox"
+notif "$SRC/history" 1700000000013-13 Local "path" "file:///usr/share/icons/x.png"
+"$ARCHIVE" sync
+eq "http appIcon is not archived" "" "$("$ARCHIVE" list | jq -r '.items[] | select(.summary=="tracker") | .appIcon')"
+eq "https appIcon is not archived" "" "$("$ARCHIVE" list | jq -r '.items[] | select(.summary=="tracker2") | .appIcon')"
+eq "themed icon name is kept" firefox "$("$ARCHIVE" list | jq -r '.items[] | select(.summary=="themed") | .appIcon')"
+eq "file:// icon is kept" "file:///usr/share/icons/x.png" "$("$ARCHIVE" list | jq -r '.items[] | select(.summary=="path") | .appIcon')"
+"$ARCHIVE" remove 1700000000010-10; "$ARCHIVE" remove 1700000000011-11; "$ARCHIVE" remove 1700000000012-12; "$ARCHIVE" remove 1700000000013-13
+
 "$ARCHIVE" clear
 eq "clear empties the archive" 0 "$(count)"
 "$ARCHIVE" sync
