@@ -1,6 +1,6 @@
 # Omahub
 
-![The Omahub open over an empty desktop: stacked notifications above an arXiv card and a football card](preview.png)
+![The Omahub open on the desktop: a stacked notification group above collapsible Media, arXiv Scanner and Football Tracker cards](preview.png)
 
 A slide-out hub for your Omarchy bar. One bell in the bar opens a right-hand panel with a longer, stacked history of your OS notifications and, beneath them, floating cards that other plugins contribute from their own popups. It is built for notifications today and for any plugin popup you want to keep one click away.
 
