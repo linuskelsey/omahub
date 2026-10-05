@@ -9,7 +9,7 @@ A slide-out hub for your Omarchy bar. One bell in the bar opens a right-hand pan
 ## What it does
 
 - **OS notifications**, archived beyond the stock daemon's 10-entry history and stacked per app. Hover for a dismiss ×; click a notification to focus the app that sent it. Optionally (off by default, in settings) a click runs the command the sender attached, the way clicking the toast does.
-- **Cards** from other plugins: each plugin's full popup, scrollable, inside the hub.
+- **Cards** from other plugins: each plugin's full popup inside the hub, as a collapsible drop-down. A card shows its title and a chevron; click it to expand (collapsed by default, remembered per card). An expanded card is capped at 400 px and scrolls inside.
 - **Settings** (the "Omahub settings" button at the end of the panel, right-click the bell, or SUPER + SHIFT + N): choose and reorder cards, rebind the shortcuts, hide the wrapped plugins' own bar icons, optionally blur the desktop, delete archived notifications.
 - **A bell badge**: a number for unread notifications (live toasts count the moment they appear), and a small dot when a card has news of its own, so a single event is never counted twice. With both, the dot rides the number's corner.
 - Shortcuts are registered with Hyprland at runtime (`hyprctl eval`); your Hyprland config is not edited. Default: SUPER + N toggles the panel. The shortcut opens the hub on the monitor you are working on; the bell opens it on its own bar's monitor.
@@ -48,7 +48,7 @@ Layout: the panel is placed in the space your bar leaves free (any bar size or e
 
 ## How cards load
 
-The hub instantiates every ticked card when the shell starts, not when you open the panel. That is deliberate: it lets a card's badge stay live and its data stay current, but it means each card's file watchers and timers run all the time, plus one more set per monitor (each bar creates its own hub instance). Keep a card's startup work cheap. A card taller than 400 px scrolls inside its frame.
+The hub instantiates every ticked card when the shell starts, not when you open the panel. That is deliberate: it lets a card's badge stay live and its data stay current, but it means each card's file watchers and timers run all the time, plus one more set per monitor (each bar creates its own hub instance). Keep a card's startup work cheap, and gate anything ongoing (polling, sampling, a backend process) on the optional `hubOpen` property, which is true only while the panel is open and the card is expanded. Collapsed cards stay loaded, so their `badge` and `markViewed()` still work. A card taller than 400 px scrolls inside its frame.
 
 ## For plugin authors: offer a card
 
@@ -69,7 +69,7 @@ In `manifest.json`:
 ```
 
 - `entry` — a safe relative path to a `.qml` file (`[A-Za-z0-9_./-]`, no `..`, not absolute).
-- `title` — shown in the hub's settings (defaults to the plugin name).
+- `title` — the card's header in the hub and its name in the hub's settings (defaults to the plugin name).
 - `contract` — the contract version you built against (defaults to 1). A hub that only understands an older contract ignores your card and says so in settings, instead of loading something it cannot run.
 
 The hub shows each card under a header (the manifest `title` and a chevron); clicking it expands or collapses the card, collapsed by default, and the choice is remembered per card as `expandedCards` in the hub's `config.json`. So a card should not draw its own title. If its view has a title that cannot be removed (for example one shared with the bar popup), declare `property bool hubOwnTitle: false` and set it to `true`: while the card is expanded the hub then hides its own title and leaves only a small chevron in the card's top-right corner, so there is one title, not two (the hub's header still shows while collapsed). An expanded card is capped at 400px and scrolls inside its frame.
