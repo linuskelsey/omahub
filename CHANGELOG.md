@@ -5,7 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the `ve
 ## [Unreleased]
 
 ### Changed
-- Cards are now collapsible drop-downs: each shows a header (its manifest title and a chevron) and expands on click, collapsed by default, remembered per card (`expandedCards` in `config.json`). Expanded cards keep the 400px cap and scroll inside. `hubOpen` is now true only while the panel is open and the card is expanded, so a collapsed card can stop polling. Cards stay loaded while collapsed, so the bell badge and `markViewed()` still work. Plugins that draw their own title will show it twice; remove it.
+- Cards are now collapsible drop-downs: each shows a header (its manifest title and a chevron) and expands on click, collapsed by default, remembered per card (`expandedCards` in `config.json`). Expanded cards keep the 400px cap and scroll inside. `hubOpen` is now true only while the panel is open and the card is expanded, so a collapsed card can stop polling. Cards stay loaded while collapsed, so the bell badge and `markViewed()` still work. Plugins that draw their own title should remove it, or declare the new optional `hubOwnTitle: true` card property: while such a card is expanded the hub hides its title and leaves a small corner chevron, so there is one title, not two.
 
 ## [0.2.5] — 2026-10-04
 

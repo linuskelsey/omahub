@@ -542,7 +542,10 @@ BarWidget {
               id: cardFrame
               required property var modelData
               readonly property bool expanded: (root.cfg.expandedCards || []).indexOf(modelData.id) >= 0
-              readonly property int headerHeight: Style.space(36)
+              // A card whose own view draws a title can set `hubOwnTitle: true`: while expanded the hub
+              // then drops its title and keeps only a small chevron in the corner (one title, not two).
+              readonly property bool ownTitle: expanded && loader.item !== null && loader.item.hubOwnTitle === true
+              readonly property int headerHeight: ownTitle ? 0 : Style.space(36)
               width: col.width
               height: headerHeight + (expanded ? Math.min(loader.height, root.maxCardHeight) + Style.space(24) : 0)
               radius: Style.cornerRadius
@@ -559,17 +562,18 @@ BarWidget {
                 }
               }
 
-              // Header: title, chevron; click anywhere on it to expand or collapse. The card stays
-              // loaded while collapsed so its badge and markViewed() keep working.
+              // Header: title; click anywhere on it to expand or collapse. The card stays loaded
+              // while collapsed so its badge and markViewed() keep working.
               Item {
                 id: cardHeader
                 width: parent.width
                 height: cardFrame.headerHeight
+                visible: !cardFrame.ownTitle
                 Text {
                   anchors.left: parent.left
                   anchors.leftMargin: Style.space(12)
-                  anchors.right: chevron.left
-                  anchors.rightMargin: Style.space(8)
+                  anchors.right: parent.right
+                  anchors.rightMargin: Style.space(36)
                   anchors.verticalCenter: parent.verticalCenter
                   textFormat: Text.PlainText
                   elide: Text.ElideRight
@@ -579,23 +583,34 @@ BarWidget {
                   font.pixelSize: Style.font.body
                   font.bold: true
                 }
-                Text {
-                  id: chevron
-                  anchors.right: parent.right
-                  anchors.rightMargin: Style.space(12)
-                  anchors.verticalCenter: parent.verticalCenter
-                  textFormat: Text.PlainText
-                  text: "\uf078"
-                  color: root.textColor
-                  opacity: headerHover.containsMouse ? 1 : 0.6
-                  font.family: root.fontFamily
-                  font.pixelSize: Style.font.caption
-                  rotation: cardFrame.expanded ? 180 : 0
-                  Behavior on rotation { NumberAnimation { duration: 120 } }
-                }
                 MouseArea {
                   id: headerHover
                   anchors.fill: parent
+                  hoverEnabled: true
+                  cursorShape: Qt.PointingHandCursor
+                  onClicked: root.setCardExpanded(cardFrame.modelData.id, !cardFrame.expanded)
+                }
+              }
+
+              // Chevron: vertically centred in the header, or a corner overlay when the card has its own title.
+              Text {
+                id: chevron
+                z: 2
+                anchors.right: parent.right
+                anchors.rightMargin: Style.space(12)
+                y: cardFrame.ownTitle ? Style.space(8) : (cardFrame.headerHeight - height) / 2
+                textFormat: Text.PlainText
+                text: "\uf078"
+                color: root.textColor
+                opacity: (headerHover.containsMouse || chevronHover.containsMouse) ? 1 : 0.6
+                font.family: root.fontFamily
+                font.pixelSize: Style.font.caption
+                rotation: cardFrame.expanded ? 180 : 0
+                Behavior on rotation { NumberAnimation { duration: 120 } }
+                MouseArea {
+                  id: chevronHover
+                  anchors.fill: parent
+                  anchors.margins: -Style.space(6)
                   hoverEnabled: true
                   cursorShape: Qt.PointingHandCursor
                   onClicked: root.setCardExpanded(cardFrame.modelData.id, !cardFrame.expanded)
@@ -607,7 +622,7 @@ BarWidget {
                 id: cardScroll
                 visible: cardFrame.expanded
                 anchors.fill: parent
-                anchors.topMargin: cardFrame.headerHeight
+                anchors.topMargin: cardFrame.ownTitle ? Style.space(12) : cardFrame.headerHeight
                 anchors.leftMargin: Style.space(12)
                 anchors.rightMargin: Style.space(12)
                 anchors.bottomMargin: Style.space(12)
