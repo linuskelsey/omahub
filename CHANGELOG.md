@@ -2,7 +2,7 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the `version` in `manifest.json`.
 
-## [Unreleased]
+## [0.3.2] — 2026-10-07
 
 ### Fixed
 - Scrolling the panel with the wheel could land the pointer on a slider (seek, volume) and change its value instead of scrolling. The hub now keeps the wheel for 250 ms after the last scroll movement and only then lets controls have it. Cards get two optional properties: `hubScrolling` (read) and `hubWheelGuard: false` (opt out). Contract version stays 1.
