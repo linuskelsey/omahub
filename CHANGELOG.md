@@ -2,6 +2,11 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the `version` in `manifest.json`.
 
+## [Unreleased]
+
+### Fixed
+- Opening the hub while notification toasts were still on screen left them there beside the panel. The hub now dismisses the on-screen toasts first (they are already in the archive).
+
 ## [0.3.2] — 2026-10-07
 
 ### Fixed

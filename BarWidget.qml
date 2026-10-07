@@ -92,6 +92,8 @@ BarWidget {
     closeTimer.stop()
     blurOn()
     cardsProc.running = true
+    // The toasts are already in the archive; take them off the screen so they don't sit beside the hub.
+    toastsProc.running = true
     panelOpen = true
     markSeen()
   }
@@ -257,6 +259,7 @@ BarWidget {
   }
 
   // --- data ---------------------------------------------------------------
+  Process { id: toastsProc; command: ["omarchy-shell", "-q", "notifications", "dismissAll"] }
   Process {
     id: watcher
     running: true
