@@ -463,6 +463,7 @@ BarWidget {
       // wheel passes through untouched, so a deliberate wheel over a slider still works. A card can opt
       // out with `hubWheelGuard: false`, and read `hubScrolling` to do its own thing.
       Timer { id: wheelGuard; interval: 250 }
+      NumberAnimation { id: wheelAnim; property: "contentY"; duration: 100; easing.type: Easing.OutCubic }
       MouseArea {
         anchors.fill: scroller
         z: 10
@@ -480,7 +481,13 @@ BarWidget {
             var canMove = dy > 0 ? inner.contentY > 0 : inner.contentY < inner.contentHeight - inner.height
             if (q.y >= 0 && q.y <= inner.height && canMove) target = inner
           }
-          target.contentY = Math.max(0, Math.min(target.contentHeight - target.height, target.contentY - dy))
+          // A mouse wheel steps in big notches, so ease each one; a touchpad (pixelDelta) is already smooth.
+          var smooth = w.pixelDelta.y === 0
+          var base = smooth && wheelAnim.running && wheelAnim.target === target ? wheelAnim.to : target.contentY
+          wheelAnim.stop()
+          var dest = Math.max(0, Math.min(target.contentHeight - target.height, base - dy))
+          if (smooth) { wheelAnim.target = target; wheelAnim.to = dest; wheelAnim.start() }
+          else target.contentY = dest
           wheelGuard.restart()
           w.accepted = true
         }
