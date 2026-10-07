@@ -2,6 +2,14 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the `version` in `manifest.json`.
 
+## [Unreleased]
+
+### Fixed
+- Scrolling the panel with the wheel could land the pointer on a slider (seek, volume) and change its value instead of scrolling. The hub now keeps the wheel for 250 ms after the last scroll movement and only then lets controls have it. Cards get two optional properties: `hubScrolling` (read) and `hubWheelGuard: false` (opt out). Contract version stays 1.
+
+### Changed
+- The settings shortcut now defaults to SUPER + ALT + N. SUPER + SHIFT + N is Omarchy's editor binding, so the two collided. A saved config still holding the old default moves to the new one; a shortcut you chose yourself is left alone.
+
 ## [0.3.1] — 2026-10-05
 
 ### Security

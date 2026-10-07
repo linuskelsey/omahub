@@ -29,7 +29,7 @@ BarWidget {
   property bool settingsOpen: false
   property var archive: ({ seen: 0, items: [] })
   property var available: []          // candidate cards found on disk
-  property var cfg: ({ cards: [], toggleKey: "SUPER + N", settingsKey: "SUPER + SHIFT + N", hideBarWidgets: false, blurDesktop: false, clickRunsActions: false, knownCards: [], expandedCards: [] })
+  property var cfg: ({ cards: [], toggleKey: "SUPER + N", settingsKey: "SUPER + ALT + N", hideBarWidgets: false, blurDesktop: false, clickRunsActions: false, knownCards: [], expandedCards: [] })
   property string bindStatus: ""
 
   // Highest hubCard contract this hub understands (see README "Card contract").
@@ -336,7 +336,12 @@ BarWidget {
     path: root.stateDir + "/config.json"
     printErrors: false
     onLoaded: {
-      try { root.cfg = Object.assign({}, root.cfg, JSON.parse(text())) } catch (e) {}
+      try {
+        var saved = JSON.parse(text())
+        // SUPER + SHIFT + N was the old default; Omarchy binds it to the editor.
+        if (saved.settingsKey === "SUPER + SHIFT + N") delete saved.settingsKey
+        root.cfg = Object.assign({}, root.cfg, saved)
+      } catch (e) {}
       root.registerBinds()
     }
     onLoadFailed: root.registerBinds()
@@ -452,8 +457,38 @@ BarWidget {
       focus: root.panelOpen
       Keys.onEscapePressed: root.close()
 
+      // Wheel guard. While the panel is scrolling (and for a moment after) the wheel belongs to the
+      // hub: a control that slides under a stationary pointer, such as a slider, would otherwise
+      // swallow the wheel and change its value instead of letting the scroll carry on. When idle the
+      // wheel passes through untouched, so a deliberate wheel over a slider still works. A card can opt
+      // out with `hubWheelGuard: false`, and read `hubScrolling` to do its own thing.
+      Timer { id: wheelGuard; interval: 250 }
+      MouseArea {
+        anchors.fill: scroller
+        z: 10
+        acceptedButtons: Qt.NoButton
+        onWheel: function(w) {
+          var p = mapToItem(col, w.x, w.y)
+          var frame = col.childAt(p.x, p.y)
+          var item = frame && frame.cardItem ? frame.cardItem : null
+          if (!wheelGuard.running || (item && item.hubWheelGuard === false)) { w.accepted = false; return }
+          var dy = w.pixelDelta.y !== 0 ? w.pixelDelta.y : w.angleDelta.y
+          var target = scroller
+          var inner = frame && frame.scrollArea ? frame.scrollArea : null
+          if (inner && inner.visible && inner.interactive) {
+            var q = mapToItem(inner, w.x, w.y)
+            var canMove = dy > 0 ? inner.contentY > 0 : inner.contentY < inner.contentHeight - inner.height
+            if (q.y >= 0 && q.y <= inner.height && canMove) target = inner
+          }
+          target.contentY = Math.max(0, Math.min(target.contentHeight - target.height, target.contentY - dy))
+          wheelGuard.restart()
+          w.accepted = true
+        }
+      }
+
       Flickable {
         id: scroller
+        onContentYChanged: wheelGuard.restart()
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
@@ -557,6 +592,8 @@ BarWidget {
               // then drops its title and keeps only a small chevron in the corner (one title, not two).
               readonly property bool ownTitle: expanded && loader.item !== null && loader.item.hubOwnTitle === true
               readonly property int headerHeight: ownTitle ? 0 : Style.space(36)
+              readonly property var cardItem: loader.item
+              property alias scrollArea: cardScroll
               width: col.width
               height: headerHeight + (expanded ? Math.min(loader.height, root.maxCardHeight) + Style.space(24) : 0)
               radius: Style.cornerRadius
@@ -642,6 +679,7 @@ BarWidget {
                 clip: true
                 interactive: contentHeight > height
                 boundsBehavior: Flickable.StopAtBounds
+                onContentYChanged: wheelGuard.restart()
 
                 Loader {
                   id: loader
@@ -651,6 +689,7 @@ BarWidget {
                   onLoaded: {
                     if (item && "hubWidth" in item) item.hubWidth = Qt.binding(function() { return loader.width })
                     if (item && "shell" in item) item.shell = Qt.binding(function() { return root.bar ? root.bar.shell : null })
+                    if (item && "hubScrolling" in item) item.hubScrolling = Qt.binding(function() { return wheelGuard.running })
                     if (item && "hubOpen" in item) item.hubOpen = Qt.binding(function() { return root.panelOpen && cardFrame.expanded })
                     if (item && "badge" in item) {
                       var id = cardFrame.modelData.id
@@ -717,7 +756,7 @@ BarWidget {
     enabled: root.settingsOpen
   }
 
-  // Does a key event match a shortcut written like "SUPER + SHIFT + N"? Letters and digits only.
+  // Does a key event match a shortcut written like "SUPER + ALT + N"? Letters and digits only.
   function shortcutMatches(event, spec) {
     if (!spec) return false
     var mods = 0, key = -1
@@ -1049,8 +1088,8 @@ BarWidget {
             width: parent.width
             wrapMode: Text.Wrap
             textFormat: Text.PlainText
-            text: root.bindStatus === "ok" ? "Shortcuts registered with Hyprland. Format: SUPER + SHIFT + N."
-                : (root.bindStatus ? "Hyprland: " + root.bindStatus + ". If shortcuts can't be registered (needs Hyprland's Lua config, 0.56+), bind a key yourself to: omarchy-shell " + root.hubId + " toggle" : "Format: SUPER + SHIFT + N. Registered at runtime; your Hyprland config is not edited.")
+            text: root.bindStatus === "ok" ? "Shortcuts registered with Hyprland. Format: SUPER + ALT + N."
+                : (root.bindStatus ? "Hyprland: " + root.bindStatus + ". If shortcuts can't be registered (needs Hyprland's Lua config, 0.56+), bind a key yourself to: omarchy-shell " + root.hubId + " toggle" : "Format: SUPER + ALT + N. Registered at runtime; your Hyprland config is not edited.")
             color: root.bindStatus && root.bindStatus !== "ok" ? Color.urgent : Color.menu.text
             opacity: root.bindStatus && root.bindStatus !== "ok" ? 1 : 0.65
             font.family: root.fontFamily
