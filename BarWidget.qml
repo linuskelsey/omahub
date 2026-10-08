@@ -492,7 +492,10 @@ BarWidget {
       // swallow the wheel and change its value instead of letting the scroll carry on. When idle the
       // wheel passes through untouched, so a deliberate wheel over a slider still works. A card can opt
       // out with `hubWheelGuard: false`, and read `hubScrolling` to do its own thing.
-      Timer { id: wheelGuard; interval: 250 }
+      // Whoever scrolled last keeps the gesture until the wheel goes idle: a card that scrolls inside
+      // its frame must not grab a hub scroll just because it slid under the pointer.
+      property var wheelOwner: null
+      Timer { id: wheelGuard; interval: 250; onTriggered: slide.wheelOwner = null }
       NumberAnimation { id: wheelAnim; property: "contentY"; duration: 100; easing.type: Easing.OutCubic }
       MouseArea {
         anchors.fill: scroller
@@ -506,10 +509,14 @@ BarWidget {
           var dy = w.pixelDelta.y !== 0 ? w.pixelDelta.y : w.angleDelta.y
           var target = scroller
           var inner = frame && frame.scrollArea ? frame.scrollArea : null
-          if (inner && inner.visible && inner.interactive) {
+          if (inner && inner.visible && inner.interactive && slide.wheelOwner !== scroller) {
             var q = mapToItem(inner, w.x, w.y)
             var canMove = dy > 0 ? inner.contentY > 0 : inner.contentY < inner.contentHeight - inner.height
-            if (q.y >= 0 && q.y <= inner.height && canMove) target = inner
+            if (q.y >= 0 && q.y <= inner.height) {
+              if (canMove) target = inner
+              // A gesture that began in the card stops at its end instead of running on into the hub.
+              else if (slide.wheelOwner === inner) { wheelGuard.restart(); w.accepted = true; return }
+            }
           }
           // A mouse wheel steps in big notches, so ease each one; a touchpad (pixelDelta) is already smooth.
           var smooth = w.pixelDelta.y === 0
@@ -525,7 +532,7 @@ BarWidget {
 
       Flickable {
         id: scroller
-        onContentYChanged: wheelGuard.restart()
+        onContentYChanged: { wheelGuard.restart(); slide.wheelOwner = scroller }
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
@@ -716,7 +723,7 @@ BarWidget {
                 clip: true
                 interactive: contentHeight > height
                 boundsBehavior: Flickable.StopAtBounds
-                onContentYChanged: wheelGuard.restart()
+                onContentYChanged: { wheelGuard.restart(); if (slide.wheelOwner !== scroller) slide.wheelOwner = cardScroll }
 
                 Loader {
                   id: loader
