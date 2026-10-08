@@ -94,6 +94,8 @@ BarWidget {
     cardsProc.running = true
     // The toasts are already in the archive; take them off the screen so they don't sit beside the hub.
     toastsProc.running = true
+    // New notifications go straight to the list while the hub is open: DND skips the toast but still files it in history.
+    dndQuery.running = true
     panelOpen = true
     markSeen()
   }
@@ -114,6 +116,7 @@ BarWidget {
   function close() {
     if (panelOpen) { closing = true; closeTimer.restart() }
     panelOpen = false
+    releaseDnd()
     if (root.bar) root.bar.releasePopout(root)
   }
   function toggle(useFocused) { if (panelOpen) close(); else open(useFocused === true) }
@@ -260,6 +263,25 @@ BarWidget {
 
   // --- data ---------------------------------------------------------------
   Process { id: toastsProc; command: ["omarchy-shell", "-q", "notifications", "dismissAll"] }
+  // Only undo DND if the hub turned it on; a user who already had DND on keeps it.
+  property bool dndHeld: false
+  function releaseDnd() {
+    if (!dndHeld) return
+    dndHeld = false
+    Quickshell.execDetached(["omarchy-shell", "-q", "notifications", "setDnd", "false"])
+  }
+  Process {
+    id: dndQuery
+    command: ["omarchy-shell", "notifications", "dndState"]
+    stdout: StdioCollector {
+      waitForEnd: true
+      onStreamFinished: {
+        if (text.trim() !== "off" || !root.panelOpen) return
+        root.dndHeld = true
+        Quickshell.execDetached(["omarchy-shell", "-q", "notifications", "setDnd", "true"])
+      }
+    }
+  }
   Process {
     id: watcher
     running: true
@@ -274,7 +296,11 @@ BarWidget {
     command: [root.archiveScript, "list"]
     stdout: StdioCollector {
       waitForEnd: true
-      onStreamFinished: { try { root.archive = JSON.parse(text) } catch (e) {} }
+      onStreamFinished: {
+        try { root.archive = JSON.parse(text) } catch (e) {}
+        // Anything that lands while the hub is open is on screen already, so it counts as seen.
+        if (root.panelOpen && root.unread > 0) root.markSeen()
+      }
     }
   }
   Process {
@@ -330,6 +356,7 @@ BarWidget {
   Component.onDestruction: {
     if (blurForced) Quickshell.execDetached(["/usr/bin/hyprctl", "eval", "hl.config({ decoration = { blur = { enabled = false } } }) return 'ok'"])
     unregisterHyprland()
+    releaseDnd()
   }
   Timer { id: reloadTimer; interval: 200; onTriggered: listProc.running = true }
   Timer { interval: 60000; running: root.panelOpen; repeat: true; onTriggered: root.archive = Object.assign({}, root.archive) }

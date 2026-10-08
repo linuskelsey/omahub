@@ -6,6 +6,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the `ve
 
 ### Fixed
 - Opening the hub while notification toasts were still on screen left them there beside the panel. The hub now dismisses the on-screen toasts first (they are already in the archive).
+- Notifications arriving while the hub is open no longer pop up as toasts; they go straight into the list at the top. The hub holds Do Not Disturb on while open and puts it back on close (an existing DND setting is left alone). They also count as seen at once, so the bell's number no longer climbs while the hub is open.
 
 ## [0.3.2] — 2026-10-07
 
